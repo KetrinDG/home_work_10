@@ -30,8 +30,10 @@ class Record:
         self.phones.append(phone)
 
     def change_command(self, phone, new_phone) -> None:
-        self.phones.remove(phone)
-        self.phones.append(new_phone)
+        for ph in self.phones:
+            if ph.value == phone.value:
+                self.phones.remove(ph)
+                self.phones.append(new_phone)
 
     def del_phone(self, phone) -> None:
         self.phones.remove(phone)
@@ -114,14 +116,16 @@ def add_phone(*args):
 #изменение контакта
 @input_error
 def change_command(*args):
-    name = Name(args[0])
+    name = args[0]
     phone = Phone(args[1])
+    new_phone = Phone(args[2])
     contacts = AddressBook.read_file()
-    if contacts.get(name):
-        contacts[name] = phone
+    reck:Record = contacts.get(name)
+    if reck:
+        reck.change_command(phone, new_phone)
     else:
         return f'No contact "{name}"'
-    Record.write_file(contacts)
+    AddressBook.write_file(contacts)
     return f"Contact '{name}' change successfully"
 
 @input_error
